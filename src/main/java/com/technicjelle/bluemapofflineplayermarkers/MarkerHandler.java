@@ -35,22 +35,6 @@ import static com.technicjelle.bluemapofflineplayermarkers.Main.logger;
 
 public class MarkerHandler {
 
-	/**
-	 * Adds a player marker to the map.
-	 *
-	 * @param player The player to add the marker for.
-	 */
-	public static void add(Player player) {
-		add(player, player.getLocation(), player.getGameMode());
-	}
-
-	/**
-	 * Adds a player marker to the map.
-	 *
-	 * @param player   The player to add the marker for.
-	 * @param location The location to put the marker at.
-	 * @param gameMode The game mode of the player.
-	 */
 	public static void add(OfflinePlayer player, Location location, GameMode gameMode) {
 		Optional<BlueMapAPI> optionalApi = BlueMapAPI.getInstance();
 		if (optionalApi.isEmpty()) {
@@ -112,12 +96,6 @@ public class MarkerHandler {
 		logger.info("Marker for " + player.getName() + " added");
 	}
 
-	/**
-	 * For when BlueMap doesn't have an icon for this player yet, so we need to make it create one.
-	 * @return Whether the player head was created successfully. <br>
-	 * If <code>true</code>, the player head was created successfully.<br>
-	 * If <code>false</code>, the player head was not created successfully and the fallback icon should be used instead.
-	 */
 	private static boolean createPlayerHead(OfflinePlayer player, String assetName, BlueMapAPI api, BlueMapMap map) {
 		SkinProvider skinProvider = api.getPlugin().getSkinProvider();
 		try {
@@ -143,31 +121,6 @@ public class MarkerHandler {
 		return false; // Failure
 	}
 
-	/**
-	 * Removes a player marker from the map.
-	 *
-	 * @param player The player to remove the marker for.
-	 */
-	public static void remove(Player player) {
-		Optional<BlueMapAPI> optionalApi = BlueMapAPI.getInstance();
-		if (optionalApi.isEmpty()) {
-			logger.warning("Tried to remove a marker, but BlueMap wasn't loaded!");
-			return;
-		}
-		BlueMapAPI api = optionalApi.get();
-
-		// remove all markers with the players uuid
-		for (BlueMapMap map : api.getMaps()) {
-			MarkerSet set = map.getMarkerSets().get(Config.MARKER_SET_ID);
-			if (set != null) set.remove(player.getUniqueId().toString());
-		}
-
-		logger.info("Marker for " + player.getName() + " removed");
-	}
-
-	/**
-	 * Load in markers of all offline players by going through the playerdata NBT
-	 */
 	public static void loadOfflineMarkers() {
 		//I really don't like "getWorlds().get(0)" as a way to get the main world, but as far as I can tell there is no other way
 		File playerDataFolder = new File(Bukkit.getWorlds().get(0).getWorldFolder(), "playerdata");
