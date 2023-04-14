@@ -96,31 +96,6 @@ public class MarkerHandler {
 		logger.info("Marker for " + player.getName() + " added");
 	}
 
-	private static boolean createPlayerHead(OfflinePlayer player, String assetName, BlueMapAPI api, BlueMapMap map) {
-		SkinProvider skinProvider = api.getPlugin().getSkinProvider();
-		try {
-			Optional<BufferedImage> oImgSkin = skinProvider.load(player.getUniqueId());
-			if (oImgSkin.isEmpty()) {
-				logger.log(Level.SEVERE, player.getName() + " doesn't have a skin");
-				return false; // Failure
-			}
-
-			logger.info("Saving skin for " + player.getName() + " to " + assetName);
-			try (OutputStream out = map.getAssetStorage().writeAsset(assetName)) {
-				BufferedImage head = api.getPlugin().getPlayerMarkerIconFactory()
-						.apply(player.getUniqueId(), oImgSkin.get());
-				ImageIO.write(head, "png", out);
-				return true; // Success
-			} catch (IOException e) {
-				logger.log(Level.SEVERE, "Failed to write " + player.getName() + "'s head to asset-storage", e);
-			}
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Failed to load skin for player " + player.getName(), e);
-		}
-
-		return false; // Failure
-	}
-
 	public static void loadOfflineMarkers() {
 		//I really don't like "getWorlds().get(0)" as a way to get the main world, but as far as I can tell there is no other way
 		File playerDataFolder = new File(Bukkit.getWorlds().get(0).getWorldFolder(), "playerdata");

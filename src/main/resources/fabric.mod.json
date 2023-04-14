@@ -19,13 +19,15 @@
   "entrypoints": {
     "server": [
       {
-        "value": "com.technicjelle.bluemapofflineplayermarkers.Main"
+        "adapter": "kotlin",
+        "value": "com.technicjelle.bluemapofflineplayermarkers.MainKt"
       }
     ]
   },
   "depends": {
     "bluemap": "*",
     "fabric-api": "*",
+    "fabric-language-kotlin": "*",
     "fabricloader": "{loaderVersion}",
     "minecraft": ">=1.13",
     "java": "{javaVersion}"
