@@ -28,7 +28,7 @@
     "bluemap": "*",
     "fabric-api": "*",
     "fabric-language-kotlin": "*",
-    "fabricloader": "${loaderVersion}",
+    "fabricloader": ">${loaderVersion}",
     "minecraft": ">=1.13",
     "java": "${javaVersion}"
   }
