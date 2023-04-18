@@ -4,12 +4,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import net.minecraft.world.GameMode
 import java.io.File
 import java.nio.file.Paths
 
 object ConfigManager {
-    private val configDir: File = Paths.get("", "config", "MOD_ID", "client").toFile()
+    private val configDir: File = Paths.get("", "config", BlueMapOfflinePlayerMarkers.MOD_ID).toFile()
     private val configFile = File(configDir, "config.json")
 
     private val clientConfigJson = Json {
@@ -31,16 +30,16 @@ object ConfigManager {
         val toggleable: Boolean = true,
         val defaultHidden: Boolean = false,
         val expireTimeInHours: Int = 0,
-        private val hiddenGameModes: Set<GameMode> = setOf(
+        val hiddenGameModes: Set<GameMode> = setOf(
             GameMode.SPECTATOR
         )
     ) {
         @Serializable
-        enum class GameMode {
-            SURVIVAL,
-            CREATIVE,
-            ADVENTURE,
-            SPECTATOR
+        enum class GameMode(val id: Int) {
+            SURVIVAL(0),
+            CREATIVE(1),
+            ADVENTURE(2),
+            SPECTATOR(3)
         }
     }
 }

@@ -20,7 +20,7 @@
     "server": [
       {
         "adapter": "kotlin",
-        "value": "com.technicjelle.bluemapofflineplayermarkers.MainKt"
+        "value": "com.technicjelle.bluemapofflineplayermarkers.BlueMapOfflinePlayerMarkers"
       }
     ]
   },
@@ -28,8 +28,8 @@
     "bluemap": "*",
     "fabric-api": "*",
     "fabric-language-kotlin": "*",
-    "fabricloader": "{loaderVersion}",
+    "fabricloader": "${loaderVersion}",
     "minecraft": ">=1.13",
-    "java": "{javaVersion}"
+    "java": "${javaVersion}"
   }
 }
