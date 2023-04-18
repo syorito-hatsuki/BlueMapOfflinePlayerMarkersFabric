@@ -9,8 +9,6 @@ import de.bluecolored.bluemap.api.markers.POIMarker
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
-import net.minecraft.util.WorldSavePath
-import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
 
@@ -99,12 +97,12 @@ object MarkerHandler {
 
     fun remove(player: ServerPlayerEntity) {
         val optionalApi = BlueMapAPI.getInstance()
+
         if (optionalApi.isEmpty) {
             logger.warn("Tried to remove a marker, but BlueMap wasn't loaded!")
             return
         }
 
-        // remove all markers with the players uuid
         optionalApi.get().maps.forEach { map ->
             map.markerSets[ConfigManager.read().markerSetName]?.remove(player.uuidAsString)
         }
@@ -113,21 +111,19 @@ object MarkerHandler {
     }
 
     fun loadOfflineMarkers(server: MinecraftServer) {
-        //I really don't like "getWorlds().get(0)" as a way to get the main world, but as far as I can tell there is no other way
-        val playerDataFolder: File = server.getSavePath(WorldSavePath.PLAYERDATA).toFile()
-
-        //Return if playerdata is missing for some reason.
-        if (!playerDataFolder.exists() || !playerDataFolder.isDirectory) return
-
         server.getOfflinePlayers().forEach {
+
             val timeSinceLastPlayed: Long = System.currentTimeMillis() - it.lastTimeOnline
+
             logger.info("Player " + it.name + " was last seen " + timeSinceLastPlayed + "ms ago")
+
             if (ConfigManager.read().expireTimeInHours > 0 && timeSinceLastPlayed > ConfigManager.read().expireTimeInHours * 60 * 60 * 1000) {
                 logger.info("Player " + it.name + " was last seen too long ago, skipping")
                 return@forEach
             }
 
             add(server, it)
+
         }
     }
 }
