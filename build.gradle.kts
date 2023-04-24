@@ -41,8 +41,6 @@ dependencies {
 
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc", "fabric-language-kotlin", fabricKotlinVersion)
-
-    include(modImplementation("maven.modrinth", "ducky-updater", "zEiFLS5o"))
 }
 
 tasks {

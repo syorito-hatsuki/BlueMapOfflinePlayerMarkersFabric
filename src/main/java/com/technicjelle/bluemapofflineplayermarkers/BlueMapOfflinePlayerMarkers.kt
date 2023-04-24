@@ -1,7 +1,6 @@
 package com.technicjelle.bluemapofflineplayermarkers
 
 import de.bluecolored.bluemap.api.BlueMapAPI
-import dev.syoritohatsuki.duckyupdater.DuckyUpdater
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
@@ -26,7 +25,6 @@ object BlueMapOfflinePlayerMarkers : DedicatedServerModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server ->
             this.server = server
-            DuckyUpdater.checkForUpdate("mWxGwd3F", MOD_ID)
             BlueMapAPI.onEnable(onEnableListener)
             BlueMapAPI.onDisable(onDisableListener)
         })
