@@ -28,8 +28,8 @@
     "bluemap": "*",
     "fabric-api": "*",
     "fabric-language-kotlin": "*",
-    "fabricloader": ">${loaderVersion}",
-    "minecraft": ">=1.13",
+    "fabricloader": ">=${loaderVersion}",
+    "minecraft": ">=1.20",
     "java": "${javaVersion}"
   }
 }

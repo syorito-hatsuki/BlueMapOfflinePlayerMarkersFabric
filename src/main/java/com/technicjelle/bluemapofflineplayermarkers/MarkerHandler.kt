@@ -1,5 +1,6 @@
 package com.technicjelle.bluemapofflineplayermarkers
 
+import com.technicjelle.BMUtils
 import com.technicjelle.bluemapofflineplayermarkers.BlueMapOfflinePlayerMarkers.logger
 import de.bluecolored.bluemap.api.BlueMapAPI
 import de.bluecolored.bluemap.api.BlueMapMap
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier
 import java.io.IOException
 import javax.imageio.ImageIO
 
-object MarkerHandler {
+class MarkerHandler {
 
     fun add(server: MinecraftServer, player: OfflinePlayer) {
         val optionalApi = BlueMapAPI.getInstance()
@@ -42,21 +43,7 @@ object MarkerHandler {
             .position(player.position[0], player.position[1] + 1.8, player.position[2])
 
         blueMapWorld.maps.forEach { map ->
-            val fallbackIcon = "assets/steve.png"
-            val assetName = "playerheads/" + player.uuid + ".png"
-            var imagePath = map.assetStorage.getAssetUrl(assetName)
-
-            try {
-                if (!map.assetStorage.assetExists(assetName)) {
-                    if (!createPlayerHead(player, assetName, api, map))
-                        imagePath = fallbackIcon
-                }
-            } catch (e: IOException) {
-                logger.trace("Failed to check if asset $assetName exists", e)
-                imagePath = fallbackIcon
-            }
-
-            markerBuilder.icon(imagePath, 0, 0)
+            markerBuilder.icon(BMUtils.getPlayerHeadIconAddress(api, player.uuid, map), 0, 0)
 
             val markerSet = map.markerSets.computeIfAbsent(ConfigManager.read().markerSetName) {
                 MarkerSet.builder().label(ConfigManager.read().markerSetName)

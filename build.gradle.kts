@@ -41,6 +41,8 @@ dependencies {
 
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc", "fabric-language-kotlin", fabricKotlinVersion)
+
+    include(modImplementation("com.github.TechnicJelle", "BMUtils", "1.0"))
 }
 
 tasks {
