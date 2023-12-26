@@ -1,9 +1,6 @@
 package com.technicjelle.bluemapofflineplayermarkers
 
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtDouble
-import net.minecraft.nbt.NbtIo
-import net.minecraft.nbt.NbtList
+import net.minecraft.nbt.*
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.WorldSavePath
@@ -36,7 +33,7 @@ fun ServerPlayerEntity.toOfflinePlayer(): OfflinePlayer = getDataFromFiles(
 
 fun getDataFromFiles(offlineData: File): OfflinePlayer {
     FileInputStream(offlineData).use { stream ->
-        NbtIo.readCompressed(stream).let { nbt ->
+        NbtIo.readCompressed(stream, NbtSizeTracker.ofUnlimitedBytes()).let { nbt ->
             return OfflinePlayer(
                 UUID.fromString(offlineData.name.removeSuffix(".dat")),
                 nbt.getString("username"),
@@ -50,21 +47,19 @@ fun getDataFromFiles(offlineData: File): OfflinePlayer {
 }
 
 fun ServerPlayerEntity.writePlayerNbt() {
-    File(server.getSavePath(WorldSavePath.PLAYERDATA).toFile(), BlueMapOfflinePlayerMarkers.MOD_ID).apply {
-        if (!exists()) mkdir()
-        File(this, "$uuidAsString.dat").apply {
-            if (!exists()) createNewFile()
-            NbtIo.writeCompressed(NbtCompound().apply {
-                putString("username", entityName)
-                putLong("lastOnline", System.currentTimeMillis())
-                put("position", NbtList().apply {
-                    add(NbtDouble.of(pos.x))
-                    add(NbtDouble.of(pos.y))
-                    add(NbtDouble.of(pos.z))
-                })
-                putString("dimension", world.dimensionKey.value.toString())
-                putInt("gameMode", interactionManager.gameMode.id)
-            }, this)
-        }
+    File(server.getSavePath(WorldSavePath.PLAYERDATA).toFile(), BlueMapOfflinePlayerMarkers.MOD_ID).let {
+        if (!it.exists()) it.mkdir()
+        if (!it.exists()) it.createNewFile()
+        NbtIo.writeCompressed(NbtCompound().apply {
+            putString("username", name.literalString)
+            putLong("lastOnline", System.currentTimeMillis())
+            put("position", NbtList().apply {
+                add(NbtDouble.of(pos.x))
+                add(NbtDouble.of(pos.y))
+                add(NbtDouble.of(pos.z))
+            })
+            putString("dimension", world.dimensionKey.value.toString())
+            putInt("gameMode", interactionManager.gameMode.id)
+        }, File(it, "$uuidAsString.dat").toPath())
     }
 }

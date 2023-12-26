@@ -3,83 +3,76 @@ package com.technicjelle.bluemapofflineplayermarkers
 import com.technicjelle.BMUtils
 import com.technicjelle.bluemapofflineplayermarkers.BlueMapOfflinePlayerMarkers.logger
 import de.bluecolored.bluemap.api.BlueMapAPI
-import de.bluecolored.bluemap.api.BlueMapMap
 import de.bluecolored.bluemap.api.BlueMapWorld
 import de.bluecolored.bluemap.api.markers.MarkerSet
 import de.bluecolored.bluemap.api.markers.POIMarker
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
-import java.io.IOException
-import javax.imageio.ImageIO
+import net.minecraft.util.math.BlockPos
+import java.util.*
+import kotlin.math.roundToInt
+
 
 class MarkerHandler {
-
     fun add(server: MinecraftServer, player: OfflinePlayer) {
-        val optionalApi = BlueMapAPI.getInstance()
+        add(
+            server,
+            player.uuid,
+            player.name,
+            BlockPos(player.position[0].roundToInt(), player.position[1].roundToInt(), player.position[2].roundToInt()),
+            player.dimension,
+            player.gameMode,
+            System.currentTimeMillis()
+        )
+    }
+
+    fun add(server: MinecraftServer, player: OfflinePlayer, location: BlockPos, dimension: String, gameMode: Int) {
+        add(server, player.uuid, player.name, location, dimension, gameMode, player.lastTimeOnline)
+    }
+
+    private fun add(
+        server: MinecraftServer,
+        uuid: UUID,
+        playerName: String,
+        location: BlockPos,
+        dimension: String,
+        gameMode: Int,
+        lastPlayed: Long
+    ) {
+        val optionalApi: Optional<BlueMapAPI> = BlueMapAPI.getInstance()
 
         if (optionalApi.isEmpty) {
             logger.warn("Tried to add a marker, but BlueMap wasn't loaded!")
             return
         }
 
-        val api = optionalApi.get()
+        val api: BlueMapAPI = optionalApi.get()
 
-        if (!api.webApp.getPlayerVisibility(player.uuid)) return
+        if (!api.webApp.getPlayerVisibility(uuid)) return
 
-        if (ConfigManager.read().hiddenGameModes.any { it.id == player.gameMode }) return
+        if (ConfigManager.read().hiddenGameModes.any { it.id == gameMode }) return
 
-        val blueMapWorld: BlueMapWorld = api.getWorld(
-            server.worlds.find { it.dimensionKey.value == Identifier(player.dimension) }
-        ).orElse(null) ?: return
+        val blueMapWorld: BlueMapWorld = api.getWorld(server.worlds.find {
+            it.dimensionKey.value == Identifier(dimension)
+        }).orElse(null) ?: return
 
-        val markerBuilder = POIMarker.builder()
-            .label(player.name)
-            .detail(
-                player.name + " <i>(offline)</i><br>"
-                        + "<bmopm-datetime data-timestamp=" + player.lastTimeOnline + "></bmopm-datetime>"
-            )
-            .styleClasses("bmopm-offline-player")
-            .position(player.position[0], player.position[1] + 1.8, player.position[2])
+        val markerBuilder: POIMarker.Builder = POIMarker.builder().label(playerName).detail(
+            "$playerName <i>(offline)</i><br><bmopm-datetime data-timestamp=$lastPlayed></bmopm-datetime>"
+        ).styleClasses("bmopm-offline-player").position(location.x.toDouble(), location.y + 1.8, location.z.toDouble())
 
-        blueMapWorld.maps.forEach { map ->
-            markerBuilder.icon(BMUtils.getPlayerHeadIconAddress(api, player.uuid, map), 0, 0)
+        blueMapWorld.maps.forEach {
+            markerBuilder.icon(BMUtils.getPlayerHeadIconAddress(api, uuid, it), 0, 0) // centered with CSS instead
 
-            val markerSet = map.markerSets.computeIfAbsent(ConfigManager.read().markerSetName) {
+            it.markerSets.computeIfAbsent(ConfigManager.read().markerSetName) {
                 MarkerSet.builder().label(ConfigManager.read().markerSetName)
-                    .toggleable(ConfigManager.read().toggleable)
-                    .defaultHidden(ConfigManager.read().defaultHidden)
+                    .toggleable(ConfigManager.read().toggleable).defaultHidden(ConfigManager.read().defaultHidden)
                     .build()
-            }
-
-            markerSet.put(player.uuid.toString(), markerBuilder.build())
+            }.put(uuid.toString(), markerBuilder.build())
 
         }
 
-        logger.info("Marker for " + player.uuid + " added")
-
-    }
-
-    private fun createPlayerHead(player: OfflinePlayer, assetName: String, api: BlueMapAPI, map: BlueMapMap): Boolean {
-        try {
-            val oImgSkin = api.plugin.skinProvider.load(player.uuid)
-            if (oImgSkin.isEmpty) {
-                logger.warn("${player.name} doesn't have a skin")
-                return false // Failure
-            }
-            logger.info("Saving skin for ${player.name} to $assetName")
-            try {
-                map.assetStorage.writeAsset(assetName).use { out ->
-                    ImageIO.write(api.plugin.playerMarkerIconFactory.apply(player.uuid, oImgSkin.get()), "png", out)
-                    return true // Success
-                }
-            } catch (e: IOException) {
-                logger.trace("Failed to write ${player.name}'s head to asset-storage", e)
-            }
-        } catch (e: IOException) {
-            logger.trace("Failed to load skin for player ${player.name}", e)
-        }
-        return false // Failure
+        logger.info("Marker for $playerName added")
     }
 
     fun remove(player: ServerPlayerEntity) {
@@ -94,7 +87,7 @@ class MarkerHandler {
             map.markerSets[ConfigManager.read().markerSetName]?.remove(player.uuidAsString)
         }
 
-        logger.info("Marker for ${player.entityName} removed")
+        logger.info("Marker for ${player.name.literalString} removed")
     }
 
     fun loadOfflineMarkers(server: MinecraftServer) {

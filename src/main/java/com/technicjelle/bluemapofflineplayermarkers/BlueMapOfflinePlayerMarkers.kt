@@ -16,16 +16,14 @@ object BlueMapOfflinePlayerMarkers : DedicatedServerModInitializer {
 
     val logger: Logger = LogManager.getLogger()
 
-    private lateinit var server: MinecraftServer
     private val markerHandler = MarkerHandler()
 
     override fun onInitializeServer() {
 
         ConfigManager
 
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server ->
-            this.server = server
-            BlueMapAPI.onEnable(onEnableListener)
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted {
+            BlueMapAPI.onEnable(getOnEnableListener(it))
             BlueMapAPI.onDisable(onDisableListener)
         })
 
@@ -33,47 +31,35 @@ object BlueMapOfflinePlayerMarkers : DedicatedServerModInitializer {
             Thread { markerHandler.remove(handler.player) }.start()
         })
 
-        ServerPlayConnectionEvents.DISCONNECT.register(ServerPlayConnectionEvents.Disconnect { handler, _ ->
+        ServerPlayConnectionEvents.DISCONNECT.register(ServerPlayConnectionEvents.Disconnect { handler, server ->
             handler.player.writePlayerNbt()
 
             Thread { markerHandler.add(server, handler.player.toOfflinePlayer()) }.start()
         })
 
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerLifecycleEvents.ServerStopping {
-            BlueMapAPI.unregisterListener(onEnableListener)
+            BlueMapAPI.unregisterListener(getOnEnableListener(it))
             BlueMapAPI.unregisterListener(onDisableListener)
             logger.info("BlueMap Offline Player Markers plugin disabled!")
         })
     }
 
-    private val onEnableListener = Consumer<BlueMapAPI> { api ->
+    private fun getOnEnableListener(server: MinecraftServer) = Consumer<BlueMapAPI> { api ->
         logger.info("API Ready! BlueMap Offline Player Markers plugin enabled!")
 
-        // "registerStyle" has to be invoked inside the consumer (=> not in the async scheduled task below)
         runCatching {
             BMUtils.copyJarResourceToBlueMap(
-                javaClass.classLoader,
-                api,
-                "assets/technicjelle/style.css",
-                "bmopm.css",
-                false
+                api, javaClass.classLoader, "assets/technicjelle/style.css", "bmopm.css", false
             )
             BMUtils.copyJarResourceToBlueMap(
-                javaClass.classLoader,
-                api,
-                "assets/technicjelle/script.js",
-                "bmopm.js",
-                false
+                api, javaClass.classLoader, "assets/technicjelle/script.js", "bmopm.js", false
             )
-        }.onFailure {
-            logger.trace("Failed to copy resources to BlueMap webapp!", it)
-        }
+        }.onFailure { logger.trace("Failed to copy resources to BlueMap webapp!", it) }
 
         Thread { markerHandler.loadOfflineMarkers(server) }.start()
     }
 
     private val onDisableListener = Consumer<BlueMapAPI> {
         logger.info("API disabled! BlueMap Offline Player Markers shutting down...")
-        //not much to do here, actually...
     }
 }
