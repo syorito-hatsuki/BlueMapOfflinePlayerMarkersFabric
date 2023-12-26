@@ -38,7 +38,6 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api", "fabric-api", fabricVersion)
 
     modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.6.1")
-    modImplementation("com.github.BlueMap-Minecraft", "BlueNBT", "v1.2.1")
 
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc", "fabric-language-kotlin", fabricKotlinVersion)
