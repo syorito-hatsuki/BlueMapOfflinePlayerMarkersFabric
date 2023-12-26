@@ -37,12 +37,15 @@ dependencies {
     val fabricVersion: String by project
     modImplementation("net.fabricmc.fabric-api", "fabric-api", fabricVersion)
 
-    modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.4.0")
+    modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.6.1")
+    modImplementation("com.github.BlueMap-Minecraft", "BlueNBT", "v1.2.1")
 
     val fabricKotlinVersion: String by project
     modImplementation("net.fabricmc", "fabric-language-kotlin", fabricKotlinVersion)
 
-    include(modImplementation("com.github.TechnicJelle", "BMUtils", "1.0"))
+    include(modImplementation("com.github.TechnicJelle", "BMUtils", "v1.1"))
+
+    include(modImplementation("maven.modrinth", "fstats", "2023.12.1"))
 }
 
 tasks {
