@@ -6,16 +6,18 @@ import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.server.MinecraftServer
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.util.function.Consumer
 
 object BlueMapOfflinePlayerMarkers : DedicatedServerModInitializer {
 
-    val logger: Logger = LoggerFactory.getLogger(javaClass.simpleName)
+    const val MOD_ID = "bluemapofflineplayermarkers"
+
+    val logger: Logger = LogManager.getLogger()
+
     private lateinit var server: MinecraftServer
     private val markerHandler = MarkerHandler()
-    const val MOD_ID = "bluemapofflineplayermarkers"
 
     override fun onInitializeServer() {
 
