@@ -44,7 +44,7 @@ dependencies {
 
     include(modImplementation("com.github.TechnicJelle", "BMUtils", "v1.1"))
 
-    include(modImplementation("maven.modrinth", "fstats", "2023.12.1"))
+    include(modImplementation("maven.modrinth", "fstats", "2023.12.2"))
 }
 
 tasks {
