@@ -16,6 +16,9 @@
   },
   "license": "MIT Licence",
   "environment": "server",
+  "mixins": [
+    "bluemapofflineplayermarkers.mixins.json"
+  ],
   "entrypoints": {
     "server": [
       "com.technicjelle.bluemapofflineplayermarkers.impl.fabric.BluemapOfflinePlayerMarkers"
