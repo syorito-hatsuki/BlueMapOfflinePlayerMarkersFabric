@@ -40,6 +40,8 @@ dependencies {
 
     include(modImplementation("com.github.TechnicJelle", "BMUtils", "v1.1"))
 
+    include(modImplementation("com.github.BlueMap-Minecraft", "BlueNBT", "v2.3.0"))
+
     include(modImplementation("maven.modrinth", "fstats", "2023.12.2"))
 }
 
