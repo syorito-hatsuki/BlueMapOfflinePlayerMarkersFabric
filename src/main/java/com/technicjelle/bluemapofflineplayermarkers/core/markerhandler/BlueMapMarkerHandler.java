@@ -6,6 +6,7 @@ import com.technicjelle.bluemapofflineplayermarkers.common.Config;
 import com.technicjelle.bluemapofflineplayermarkers.common.Server;
 import com.technicjelle.bluemapofflineplayermarkers.core.Player;
 import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
+import com.technicjelle.bluemapofflineplayermarkers.impl.fabric.BluemapOfflinePlayerMarkers;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.BlueMapWorld;
@@ -65,7 +66,7 @@ public class BlueMapMarkerHandler implements MarkerHandler {
             markerSet.put(player.getPlayerUUID().toString(), markerBuilder.build());
         }
 
-        Singletons.getLogger().info("Marker for " + player.getPlayerName() + " added");
+        BluemapOfflinePlayerMarkers.LOGGER.info("Marker for {} added", player.getPlayerName());
     }
 
     @Override
@@ -76,6 +77,6 @@ public class BlueMapMarkerHandler implements MarkerHandler {
             if (set != null) set.remove(playerUUID.toString());
         }
 
-        Singletons.getLogger().info("Marker for " + Singletons.getServer().getPlayerName(playerUUID) + " removed");
+        BluemapOfflinePlayerMarkers.LOGGER.info("Marker for {} removed", Singletons.getServer().getPlayerName(playerUUID));
     }
 }
