@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("fabric-loom")
     kotlin("jvm")
-    kotlin("plugin.serialization")
 }
 
 base {
@@ -38,9 +37,6 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api", "fabric-api", fabricVersion)
 
     modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.6.1")
-
-    val fabricKotlinVersion: String by project
-    modImplementation("net.fabricmc", "fabric-language-kotlin", fabricKotlinVersion)
 
     include(modImplementation("com.github.TechnicJelle", "BMUtils", "v1.1"))
 
