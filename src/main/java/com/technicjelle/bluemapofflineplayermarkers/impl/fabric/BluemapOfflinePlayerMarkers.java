@@ -1,0 +1,103 @@
+package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
+
+import com.technicjelle.BMUtils;
+import com.technicjelle.bluemapofflineplayermarkers.core.BMApiStatus;
+import com.technicjelle.bluemapofflineplayermarkers.core.Player;
+import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
+import com.technicjelle.bluemapofflineplayermarkers.core.fileloader.FileMarkerLoader;
+import com.technicjelle.bluemapofflineplayermarkers.core.markerhandler.BlueMapMarkerHandler;
+import de.bluecolored.bluemap.api.BlueMapAPI;
+import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitializer {
+
+    Logger logger = Logger.getLogger(getClass().getName());
+
+    @Override
+    public void onInitializeServer() {
+
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            FabricConfig config = new FabricConfig();
+            config.createAndReadConfig();
+            Singletons.init(new FabricServer(server), logger, config, new BlueMapMarkerHandler(), new BMApiStatus());
+            Singletons.getServer().startUp();
+            BlueMapAPI.onEnable(onEnableListener);
+            BlueMapAPI.onDisable(onDisableListener);
+        });
+
+        logger.info("BlueMap Offline Player Markers plugin (on)loading...");
+        BlueMapAPI.onEnable(api -> {
+            logger.info("BlueMap is enabled! Copying resources to BlueMap webapp and registering them...");
+            try {
+                BMUtils.copyJarResourceToBlueMap(api, getClass().getClassLoader(), "assets/technicjelle/style.css", "bmopm.css", false);
+                BMUtils.copyJarResourceToBlueMap(api, getClass().getClassLoader(), "assets/technicjelle/script.js", "bmopm.js", false);
+            } catch (IOException e) {
+                Singletons.getLogger().log(Level.SEVERE, "Failed to copy resources to BlueMap webapp!", e);
+            }
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            new Thread(() -> {
+                Optional<BlueMapAPI> api = BlueMapAPI.getInstance();
+                if (api.isEmpty()) {
+                    Singletons.getLogger().warning("BlueMap is not loaded, not removing marker for " + handler.player.getName());
+                    return;
+                }
+                Singletons.getMarkerHandler().remove(handler.player.getUuid(), api.get());
+            }).start();
+        });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                    PlayerFabricData playerFabricData = new PlayerFabricData(handler.player);
+                    Player playerToAdd = new Player(handler.player.getUuid(), playerFabricData);
+
+                    Optional<BlueMapAPI> api = BlueMapAPI.getInstance();
+                    if (api.isEmpty()) {
+                        Singletons.getLogger().warning("BlueMap is not loaded, not adding marker for " + handler.player.getName());
+                        return;
+                    }
+
+                    Singletons.getMarkerHandler().add(playerToAdd, api.get());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
+        });
+
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            BlueMapAPI.unregisterListener(onEnableListener);
+            BlueMapAPI.unregisterListener(onDisableListener);
+            Singletons.getServer().shutDown();
+            Singletons.getLogger().info("BlueMap Offline Player Markers plugin disabled!");
+            Singletons.cleanup();
+        });
+    }
+
+    private final Consumer<BlueMapAPI> onEnableListener = api -> {
+        logger.info("API Ready! BlueMap Offline Player Markers plugin enabled!");
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(100);
+                FileMarkerLoader.loadOfflineMarkers();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    };
+
+    final Consumer<BlueMapAPI> onDisableListener = api -> {
+        logger.info("API disabled! BlueMap Offline Player Markers shutting down...");
+    };
+}
