@@ -18,10 +18,7 @@
   "environment": "server",
   "entrypoints": {
     "server": [
-      {
-        "adapter": "kotlin",
-        "value": "com.technicjelle.bluemapofflineplayermarkers.BlueMapOfflinePlayerMarkers"
-      }
+      "com.technicjelle.bluemapofflineplayermarkers.impl.fabric.BluemapOfflinePlayerMarkers"
     ]
   },
   "custom": {
@@ -30,7 +27,6 @@
   "depends": {
     "bluemap": "*",
     "fabric-api": "*",
-    "fabric-language-kotlin": "*",
     "fabricloader": ">=${loaderVersion}",
     "minecraft": ">=1.20.4",
     "java": ">=${javaVersion}"
