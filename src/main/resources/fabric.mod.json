@@ -34,7 +34,7 @@
     "bluemap": "*",
     "fabric-api": "*",
     "fabricloader": ">=${loaderVersion}",
-    "minecraft": ">=1.20",
+    "minecraft": ">=1.21",
     "java": ">=${javaVersion}"
   },
   "suggests": {

@@ -35,6 +35,6 @@ public class PlayerFabricData implements PlayerData {
 
     @Override
     public Optional<String> getDimension() {
-        return Optional.of(player.getWorld().getDimensionKey().getValue().toString());
+        return Optional.of(player.getWorld().getDimensionEntry().getKey().get().getValue().toString());
     }
 }

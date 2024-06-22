@@ -11,7 +11,7 @@ base {
     archivesName.set(archivesBaseName)
 }
 
-val javaVersion = JavaVersion.VERSION_17
+val javaVersion = JavaVersion.VERSION_21
 val loaderVersion: String by project
 val minecraftVersion: String by project
 
@@ -57,8 +57,8 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = javaVersion.toString()
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
 
