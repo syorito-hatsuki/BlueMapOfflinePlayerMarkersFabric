@@ -39,7 +39,7 @@ dependencies {
 
     modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.6.1")
 
-    include(implementation(files("libs/BMUtils-v1.1.jar"))!!)
+    include(modImplementation("com.github.TechnicJelle:BMUtils:v4.2")!!)
 
     include(modImplementation("com.github.BlueMap-Minecraft", "BlueNBT", "v2.3.0"))
 
@@ -49,7 +49,8 @@ dependencies {
 }
 
 tasks {
-    withType<JavaCompile> {
+
+withType<JavaCompile> {
         options.encoding = "UTF-8"
         sourceCompatibility = javaVersion.toString()
         targetCompatibility = javaVersion.toString()

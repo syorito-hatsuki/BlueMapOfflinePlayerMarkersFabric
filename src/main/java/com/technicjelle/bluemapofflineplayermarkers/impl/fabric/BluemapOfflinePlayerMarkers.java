@@ -1,6 +1,6 @@
 package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
 
-import com.technicjelle.BMUtils;
+import com.technicjelle.BMUtils.BMCopy;
 import com.technicjelle.bluemapofflineplayermarkers.core.BMApiStatus;
 import com.technicjelle.bluemapofflineplayermarkers.core.Player;
 import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
@@ -37,8 +37,8 @@ public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitialize
         BlueMapAPI.onEnable(api -> {
             LOGGER.info("BlueMap is enabled! Copying resources to BlueMap webapp and registering them...");
             try {
-                BMUtils.copyJarResourceToBlueMap(api, getClass().getClassLoader(), "assets/technicjelle/style.css", "bmopm.css", false);
-                BMUtils.copyJarResourceToBlueMap(api, getClass().getClassLoader(), "assets/technicjelle/script.js", "bmopm.js", false);
+                BMCopy.jarResourceToWebApp(api, getClass().getClassLoader(), "assets/technicjelle/style.css", "bmopm.css", false);
+                BMCopy.jarResourceToWebApp(api, getClass().getClassLoader(), "assets/technicjelle/script.js", "bmopm.js", false);
             } catch (IOException e) {
                 LOGGER.error("Failed to copy resources to BlueMap webapp!", e);
             }
