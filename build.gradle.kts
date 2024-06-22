@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -38,7 +39,7 @@ dependencies {
 
     modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.6.1")
 
-    include(modImplementation("com.github.TechnicJelle", "BMUtils", "v1.1"))
+    include(implementation(files("libs/BMUtils-v1.1.jar"))!!)
 
     include(modImplementation("com.github.BlueMap-Minecraft", "BlueNBT", "v2.3.0"))
 
