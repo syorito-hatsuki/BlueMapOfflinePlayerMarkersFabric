@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
@@ -77,7 +78,7 @@ public interface Server {
         String name = _cachedPlayerNames.get(playerUUID);
         if (name != null) return name;
 
-        URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID);
+        URL url = URI.create("https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID).toURL();
         URLConnection request = url.openConnection();
         request.connect();
 
