@@ -22,8 +22,8 @@ val mavenGroup: String by project
 group = mavenGroup
 
 repositories {
-    maven("https://jitpack.io")
     maven("https://api.modrinth.com/maven")
+    maven("https://repo.bluecolored.de/releases")
 }
 
 dependencies {
@@ -37,11 +37,12 @@ dependencies {
     val fabricVersion: String by project
     modImplementation("net.fabricmc.fabric-api", "fabric-api", fabricVersion)
 
-    modImplementation("com.github.BlueMap-Minecraft", "BlueMapAPI", "v2.6.1")
+    modImplementation("de.bluecolored.bluemap", "BlueMapAPI", "2.7.2")
 
-    include(modImplementation("com.github.TechnicJelle:BMUtils:v4.2")!!)
+    include(modImplementation("com.technicjelle", "BMUtils", "4.3.0"))
+    include(modImplementation("com.technicjelle", "MCUtils", "2.0"))
 
-    include(modImplementation("com.github.BlueMap-Minecraft", "BlueNBT", "v2.3.0"))
+    include(modImplementation("de.bluecolored", "bluenbt", "3.3.0"))
 
     include(modImplementation("maven.modrinth", "fstats", "2023.12.3"))
 
@@ -50,7 +51,7 @@ dependencies {
 
 tasks {
 
-withType<JavaCompile> {
+    withType<JavaCompile> {
         options.encoding = "UTF-8"
         sourceCompatibility = javaVersion.toString()
         targetCompatibility = javaVersion.toString()
@@ -72,8 +73,6 @@ withType<JavaCompile> {
             expand(
                 mutableMapOf(
                     "version" to project.version,
-                    "loaderVersion" to loaderVersion,
-                    "javaVersion" to javaVersion.toString()
                 )
             )
         }

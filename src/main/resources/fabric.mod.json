@@ -33,9 +33,9 @@
   "depends": {
     "bluemap": "*",
     "fabric-api": "*",
-    "fabricloader": ">=${loaderVersion}",
+    "fabricloader": "*",
     "minecraft": ">=1.21",
-    "java": ">=${javaVersion}"
+    "java": "*"
   },
   "suggests": {
     "fstats-api": "*"
