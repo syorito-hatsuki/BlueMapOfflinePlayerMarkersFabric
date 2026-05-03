@@ -70,9 +70,9 @@ public class FileMarkerLoader {
 
 		try (GZIPInputStream in = new GZIPInputStream(Files.newInputStream(playerDataFile))) {
 			NBTReader reader = new NBTReader(in);
-			PlayerNBTData playerNBTData = nbt.read(reader, PlayerNBTData.class);
+			NBTPlayerData NBTPlayerData = nbt.read(reader, NBTPlayerData.class);
 
-			Player player = new Player(playerUUID, playerNBTData);
+			Player player = new Player(playerUUID, NBTPlayerData);
 			Singletons.getMarkerHandler().add(player, api);
 		} catch (IOException e) {
 			Singletons.getLogger().log(Level.SEVERE, "Failed to read playerdata file " + fileName, e);

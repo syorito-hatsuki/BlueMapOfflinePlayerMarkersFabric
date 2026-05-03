@@ -12,28 +12,25 @@ import de.bluecolored.bluemap.api.BlueMapWorld;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class BlueMapMarkerHandler implements MarkerHandler {
 	@Override
 	public void add(Player player, BlueMapAPI api) {
-		//If this player's visibility is disabled on the map, don't add the marker.
+		// If this player's visibility is disabled on the map, don't add the marker.
+		//noinspection UnstableApiUsage
 		if (!api.getWebApp().getPlayerVisibility(player.getPlayerUUID())) return;
 
 		Config config = Singletons.getConfig();
-		//If this player's game mode is disabled on the map, don't add the marker.
+		// If this player's game mode is disabled on the map, don't add the marker.
 		if (config.isGameModeHidden(player.getPlayerData().getGameMode())) return;
 
 		Server server = Singletons.getServer();
-		//If this player is banned and the config is set to hide banned players, don't add the marker.
+		// If this player is banned and the config is set to hide banned players, don't add the marker.
 		if (config.hideBannedPlayers() && server.isPlayerBanned(player.getPlayerUUID())) return;
 
-		// Get BlueMapWorld for the position
-		Optional<UUID> worldUUID = player.getPlayerData().getWorldUUID();
-		if (worldUUID.isEmpty()) return;
-		BlueMapWorld blueMapWorld = api.getWorld(worldUUID.get()).orElse(null);
-		if (blueMapWorld == null) return;
+		//Get the player's position in the world
+		BlueMapWorld blueMapWorld = server.getBlueMapWorldForPlayer(api, player);
 		Vector3d position = player.getPlayerData().getPosition();
 		if (position == null) return;
 

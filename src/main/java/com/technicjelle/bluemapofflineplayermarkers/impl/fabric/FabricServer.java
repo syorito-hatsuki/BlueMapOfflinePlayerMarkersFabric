@@ -1,10 +1,11 @@
 package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
 
 import com.technicjelle.bluemapofflineplayermarkers.common.Server;
+import com.technicjelle.bluemapofflineplayermarkers.core.Player;
+import com.technicjelle.bluemapofflineplayermarkers.impl.fabric.util.BukkitData;
+import de.bluecolored.bluemap.api.BlueMapAPI;
+import de.bluecolored.bluemap.api.BlueMapWorld;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.level.storage.LevelResource;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class FabricServer implements Server {
 
     MinecraftServer server;
+    BukkitData bukkitData;
 
     public FabricServer(MinecraftServer server) {
         this.server = server;
+        this.bukkitData = new BukkitData(server.getWorldPath(LevelResource.PLAYER_DATA_DIR));
     }
 
     @Override
@@ -49,29 +52,35 @@ public class FabricServer implements Server {
     }
 
     @Override
-    public Instant getPlayerLastPlayed(UUID playerUUID) {
-        try {
-            CompoundTag nbt = NbtIo.readCompressed(getPlayerDataFolder().resolve(playerUUID + ".dat"), NbtAccounter.unlimitedHeap());
-            long millisSinceEpoch = nbt.getCompoundOrEmpty("bukkit").getLongOr("lastPlayed", 0L);
-            return Instant.ofEpochMilli(millisSinceEpoch);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Optional<Instant> getPlayerLastPlayed(UUID playerUUID) {
+        var lastPlayed = bukkitData.getLastPlayed(playerUUID);
+
+        if (lastPlayed != null && lastPlayed > 0) return Optional.of(Instant.ofEpochMilli(lastPlayed));
+
+        return Optional.empty();
     }
 
     @Override
     public String getPlayerName(UUID playerUUID) {
         Optional<NameAndId> profile = server.services().nameToIdCache().get(playerUUID);
+        if (profile.isPresent()) return profile.get().name();
 
-        if (profile.isEmpty()) throw new RuntimeException("Can't get player from cache with id: " + playerUUID);
+        var lastKnownName = bukkitData.getLastKnownName(playerUUID);
+        if (lastKnownName != null) return lastKnownName;
 
-        return profile.get().name();
+        try {
+            return Server.nameFromMojangAPI(playerUUID);
+        } catch (IOException e) {
+            return playerUUID.toString();
+        }
     }
 
     @Override
-    public Optional<UUID> guessWorldUUID(Object object) {
-        // Unused in Fabric
-        return Optional.empty();
+    public BlueMapWorld getBlueMapWorldForPlayer(BlueMapAPI api, Player player) {
+        var dimension = player.getPlayerData().getDimension();
+
+        return api.getWorld(dimension)
+                .orElseThrow(() -> new IllegalArgumentException("Could not find BlueMap world for dimension: " + dimension));
     }
 
     @Override

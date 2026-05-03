@@ -28,7 +28,7 @@ public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitialize
             LOGGER.info("BlueMap Offline Player Markers plugin enabled!");
             FabricConfig config = new FabricConfig();
             config.createAndReadConfig();
-            Singletons.init(new FabricServer(server), null, config, new BlueMapMarkerHandler(), new BMApiStatus());
+            Singletons.init(new FabricServer(server), java.util.logging.Logger.getLogger(BluemapOfflinePlayerMarkers.class.getName()), config, new BlueMapMarkerHandler(), new BMApiStatus());
             Singletons.getServer().startUp();
             BlueMapAPI.onEnable(onEnableListener);
             BlueMapAPI.onDisable(onDisableListener);
@@ -58,8 +58,8 @@ public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitialize
         ServerPlayConnectionEvents.DISCONNECT.register((handler, _) -> new Thread(() -> {
             try {
                 Thread.sleep(100);
-                PlayerFabricData playerFabricData = new PlayerFabricData(handler.player);
-                Player playerToAdd = new Player(handler.player.getUUID(), playerFabricData);
+                FabricPlayerData fabricPlayerData = new FabricPlayerData(handler.player);
+                Player playerToAdd = new Player(handler.player.getUUID(), fabricPlayerData);
 
                 Optional<BlueMapAPI> api = BlueMapAPI.getInstance();
                 if (api.isEmpty()) {

@@ -10,61 +10,62 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface Config {
-	String MARKER_SET_ID = "offline-players";
+    String MARKER_SET_ID = "offline-players";
 
-	String getMarkerSetName();
+    String getMarkerSetName();
 
-	boolean isToggleable();
+    boolean isToggleable();
 
-	boolean isDefaultHidden();
+    boolean isDefaultHidden();
 
-	/**
-	 * If you want to show only players who have joined in the last X hours, set this to a number greater than 0.<p>
-	 * If you want to show all players, set this to 0.
-	 */
-	long getExpireTimeInHours();
+    /**
+     * If you want to show only players who have joined in the last X hours, set this to a number greater than 0.<p>
+     * If you want to show all players, set this to 0.
+     */
+    long getExpireTimeInHours();
 
-	List<GameMode> getHiddenGameModes();
+    List<GameMode> getHiddenGameModes();
 
-	default boolean isGameModeHidden(GameMode gameMode) {
-		return getHiddenGameModes().contains(gameMode);
-	}
+    default boolean isGameModeHidden(GameMode gameMode) {
+        return getHiddenGameModes().contains(gameMode);
+    }
 
-	boolean hideBannedPlayers();
+    boolean hideBannedPlayers();
 
-	/**
-	 * @param playerUUID The player to check.
-	 * @return true if the player should be hidden
-	 */
-	default boolean checkPlayerLastPlayed(UUID playerUUID) {
-		if (getExpireTimeInHours() <= 0) return false; // don't hide players if the expiry time is 0 or less
+    /**
+     * @param playerUUID The player to check.
+     * @return true if the player should be hidden
+     */
+    default boolean checkPlayerLastPlayed(UUID playerUUID) {
+        if (getExpireTimeInHours() <= 0) return false; // don't hide players if the expiry time is 0 or less
 
-		Optional<Instant> oLastPlayed = Singletons.getServer().getPlayerLastPlayed(playerUUID);
-		if (oLastPlayed.isEmpty()) return false; // don't hide players without a last played time
+        Optional<Instant> oLastPlayed = Singletons.getServer().getPlayerLastPlayed(playerUUID);
+        if (oLastPlayed.isEmpty()) return false; // don't hide players without a last played time
 
-		Instant lastPlayed = oLastPlayed.get();
-		Instant expireTime = Instant.now().minusSeconds(getExpireTimeInHours() * 60 * 60);
+        Instant lastPlayed = oLastPlayed.get();
+        Instant expireTime = Instant.now().minusSeconds(getExpireTimeInHours() * 60 * 60);
 
-		boolean shouldBeHidden = lastPlayed.isBefore(expireTime);
-		if (shouldBeHidden) {
-			String playerName = Singletons.getServer().getPlayerName(playerUUID);
-			Singletons.getLogger().finer("Player " + playerName + " (" + playerUUID + ") was last online at " + oLastPlayed + ",\n" +
-			                             "which is more than " + getExpireTimeInHours() + " hours ago, so not adding marker");
-		}
-		return shouldBeHidden;
-	}
+        boolean shouldBeHidden = lastPlayed.isBefore(expireTime);
+        if (shouldBeHidden) {
+            String playerName = Singletons.getServer().getPlayerName(playerUUID);
+            Singletons.getLogger().finer("Player " + playerName + " (" + playerUUID + ") was last online at " + oLastPlayed + ",\n" +
+                    "which is more than " + getExpireTimeInHours() + " hours ago, so not adding marker");
+        }
+        return shouldBeHidden;
+    }
 
-	static List<GameMode> parseGameModes(List<String> hiddenGameModesStrings) throws IllegalArgumentException {
-		ArrayList<GameMode> gameModes = new ArrayList<>();
-		for (String hiddenGameModeString : hiddenGameModesStrings) {
-			try {
-				GameMode parsedGameMode = GameMode.getById(hiddenGameModeString);
-				if (parsedGameMode == null) throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
-				gameModes.add(parsedGameMode);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
-			}
-		}
-		return gameModes;
-	}
+    static List<GameMode> parseGameModes(List<String> hiddenGameModesStrings) throws IllegalArgumentException {
+        ArrayList<GameMode> gameModes = new ArrayList<>();
+        for (String hiddenGameModeString : hiddenGameModesStrings) {
+            try {
+                GameMode parsedGameMode = GameMode.getById(hiddenGameModeString);
+                if (parsedGameMode == null)
+                    throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
+                gameModes.add(parsedGameMode);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
+            }
+        }
+        return gameModes;
+    }
 }

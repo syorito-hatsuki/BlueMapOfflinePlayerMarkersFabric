@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PlayerNBTData implements PlayerData {
+public class NBTPlayerData implements PlayerData {
     @NBTName("playerGameType")
     private int gameMode;
 
@@ -37,12 +37,15 @@ public class PlayerNBTData implements PlayerData {
 
     @Nullable
     public Optional<UUID> getWorldUUID() {
-        // Unused in Fabric
+        UUID worldUUID = new UUID(worldUUIDMost, worldUUIDLeast);
+        if (!worldUUID.equals(new UUID(0, 0))) {
+            return Optional.of(worldUUID);
+        }
+
         return Optional.empty();
     }
 
-    @Nullable
-    public Optional<String> getDimension() {
-        return Optional.of(dimension.toString());
+    public Object getDimension() {
+        return dimension;
     }
 }

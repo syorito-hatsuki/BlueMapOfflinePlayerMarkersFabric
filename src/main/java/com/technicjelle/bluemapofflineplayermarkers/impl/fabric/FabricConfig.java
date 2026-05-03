@@ -28,6 +28,7 @@ public class FabricConfig implements Config {
             var configFolderPath = FabricLoader.getInstance().getConfigDir();
             var configFile = new File(configFolderPath.toFile(), "bluemapofflineplayermarkers.json");
             if (!configFile.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 configFile.createNewFile();
                 Files.writeString(configFile.toPath(), gson.toJson(this));
             }

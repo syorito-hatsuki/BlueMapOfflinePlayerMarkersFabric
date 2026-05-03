@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.technicjelle.bluemapofflineplayermarkers.core.Player;
 import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
+import de.bluecolored.bluemap.api.BlueMapAPI;
+import de.bluecolored.bluemap.api.BlueMapWorld;
 
 import java.io.File;
 import java.io.FileReader;
@@ -100,7 +103,7 @@ public interface Server {
 		return name;
 	}
 
-	Optional<UUID> guessWorldUUID(Object object);
+	BlueMapWorld getBlueMapWorldForPlayer(BlueMapAPI api, Player player);
 
 	boolean isPlayerBanned(UUID playerUUID);
 }

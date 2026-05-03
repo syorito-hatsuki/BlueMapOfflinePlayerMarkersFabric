@@ -13,5 +13,11 @@ public interface PlayerData {
 
 	Optional<UUID> getWorldUUID();
 
-    Optional<String> getDimension();
+	/// For the NBT implementation, this is the `Dimension` key
+	///
+	/// For server implementations, I recommend making this return the platform's World object that feeds directly into <code>BlueMapAPI.getWorld</code>.<br>
+	/// And then in <code>Server.getBlueMapWorldForPlayer</code>, check if the PlayerData instanceof YourPlayerData and put the getDimension() method into getWorld().
+	///
+	/// @see de.bluecolored.bluemap.api.BlueMapAPI#getWorld(Object)
+	Object getDimension();
 }
