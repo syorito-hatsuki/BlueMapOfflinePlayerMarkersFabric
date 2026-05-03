@@ -2,12 +2,13 @@ package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric;
 
 import com.technicjelle.bluemapofflineplayermarkers.common.Server;
 import com.technicjelle.bluemapofflineplayermarkers.core.Player;
-import dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.util.BukkitData;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapWorld;
+import dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.util.BukkitData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
@@ -79,8 +80,21 @@ public class FabricServer implements Server {
     public BlueMapWorld getBlueMapWorldForPlayer(BlueMapAPI api, Player player) {
         var dimension = player.getPlayerData().getDimension();
 
-        return api.getWorld(dimension)
-                .orElseThrow(() -> new IllegalArgumentException("Could not find BlueMap world for dimension: " + dimension));
+        if (dimension instanceof Integer dimensionInteger) {
+            return api.getWorld(switch (dimensionInteger) {
+                case 0 -> Level.OVERWORLD.identifier().toString();
+                case 1 -> Level.NETHER.identifier().toString();
+                case -1 -> Level.END.identifier().toString();
+                default ->
+                        throw new IllegalArgumentException("Invalid dimension integer: " + dimension + " for player: " + player.getPlayerUUID());
+            }).orElseThrow(() -> new IllegalArgumentException("Could not find BlueMap world for dimension " + dimension + " from player: " + player.getPlayerUUID()));
+        }
+
+        if (dimension instanceof String) {
+            return api.getWorld(dimension).orElseThrow(() -> new IllegalArgumentException("Could not find BlueMap world for dimension " + dimension + " from player: " + player.getPlayerUUID()));
+        }
+
+        throw new IllegalArgumentException("Invalid dimension type: " + dimension.getClass().getName() + " for player: " + player.getPlayerUUID());
     }
 
     @Override
