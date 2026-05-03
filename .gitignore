@@ -115,6 +115,9 @@ run/
 # Minecraft server for testing
 testserver/
 
+# Player Name Caches
+cachedPlayerNames.json
+
 ### Minecraft Test ###
 run
 
