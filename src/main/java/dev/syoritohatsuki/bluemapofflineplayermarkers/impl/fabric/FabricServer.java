@@ -58,6 +58,8 @@ public class FabricServer implements Server {
 
         if (lastPlayed != null && lastPlayed > 0) return Optional.of(Instant.ofEpochMilli(lastPlayed));
 
+        BluemapOfflinePlayerMarkers.LOGGER.warn("Can't get lastPlayed for player {}. Skipping...", playerUUID);
+
         return Optional.empty();
     }
 
@@ -72,6 +74,7 @@ public class FabricServer implements Server {
         try {
             return Server.nameFromMojangAPI(playerUUID);
         } catch (IOException e) {
+            BluemapOfflinePlayerMarkers.LOGGER.warn("Can't get player name for player {} from all sources", playerUUID);
             return playerUUID.toString();
         }
     }
