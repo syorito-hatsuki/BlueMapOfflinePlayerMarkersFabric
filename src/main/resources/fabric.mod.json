@@ -21,7 +21,7 @@
   ],
   "entrypoints": {
     "server": [
-      "com.technicjelle.bluemapofflineplayermarkers.impl.fabric.BluemapOfflinePlayerMarkers"
+      "dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.BluemapOfflinePlayerMarkers"
     ]
   },
   "custom": {
