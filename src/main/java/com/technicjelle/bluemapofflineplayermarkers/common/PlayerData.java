@@ -12,4 +12,6 @@ public interface PlayerData {
 	Vector3d getPosition();
 
 	Optional<UUID> getWorldUUID();
+
+    Optional<String> getDimension();
 }

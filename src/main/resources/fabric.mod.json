@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "bluemapofflineplayermarkers",
+  "version": "${version}",
+  "name": "BlueMapOfflinePlayerMarkers",
+  "description": "Adds markers where players have logged off to BlueMap",
+  "authors": [
+    "TechnicJelle",
+    "Mark-255",
+    "Blue",
+    "Seercat3160",
+    "Syorito Hatsuki"
+  ],
+  "contact": {
+    "homepage": "https://github.com/TechnicJelle/BlueMapOfflinePlayerMarkers"
+  },
+  "license": "MIT Licence",
+  "environment": "server",
+  "mixins": [
+    "bluemapofflineplayermarkers.mixins.json"
+  ],
+  "entrypoints": {
+    "server": [
+      "com.technicjelle.bluemapofflineplayermarkers.impl.fabric.BluemapOfflinePlayerMarkers"
+    ]
+  },
+  "custom": {
+    "fstats": 43,
+    "duckyupdater": {
+      "modrinthId": "4h9u0qdE"
+    }
+  },
+  "depends": {
+    "bluemap": "*",
+    "fabric-api": "*",
+    "fabricloader": "*",
+    "minecraft": ">=26.1",
+    "java": "*"
+  },
+  "suggests": {
+    "fstats-api": "*"
+  }
+}

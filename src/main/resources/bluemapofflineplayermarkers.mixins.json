@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.technicjelle.bluemapofflineplayermarkers.impl.fabric.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "server": [
+    "ServerPlayerMixin"
+  ]
+}
