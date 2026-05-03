@@ -7,11 +7,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PlayerData {
-    GameMode getGameMode();
+	GameMode getGameMode();
 
-    Vector3d getPosition();
+	Vector3d getPosition();
 
-    Optional<UUID> getWorldUUID();
+	Optional<UUID> getWorldUUID();
 
     Optional<String> getDimension();
 }
