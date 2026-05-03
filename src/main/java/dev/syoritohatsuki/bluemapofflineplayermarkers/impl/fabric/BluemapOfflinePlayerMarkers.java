@@ -1,4 +1,4 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric;
 
 import com.technicjelle.BMUtils.BMCopy;
 import com.technicjelle.bluemapofflineplayermarkers.core.BMApiStatus;

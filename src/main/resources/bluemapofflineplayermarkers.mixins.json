@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.technicjelle.bluemapofflineplayermarkers.impl.fabric.mixin",
+  "package": "dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.mixin",
   "compatibilityLevel": "JAVA_25",
   "injectors": {
     "defaultRequire": 1

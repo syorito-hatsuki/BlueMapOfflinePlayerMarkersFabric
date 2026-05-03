@@ -1,7 +1,7 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric.mixin;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.mixin;
 
 import com.mojang.authlib.GameProfile;
-import com.technicjelle.bluemapofflineplayermarkers.impl.fabric.codec.BukkitCodec;
+import dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.codec.BukkitCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;

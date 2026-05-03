@@ -1,4 +1,4 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric.codec;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.codec;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

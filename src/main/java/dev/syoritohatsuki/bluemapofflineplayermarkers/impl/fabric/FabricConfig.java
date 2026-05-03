@@ -1,4 +1,4 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric;
 
 import com.google.gson.GsonBuilder;
 import com.technicjelle.bluemapofflineplayermarkers.common.Config;

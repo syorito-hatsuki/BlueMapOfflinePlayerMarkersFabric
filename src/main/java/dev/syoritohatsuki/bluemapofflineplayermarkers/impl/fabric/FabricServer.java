@@ -1,8 +1,8 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric;
 
 import com.technicjelle.bluemapofflineplayermarkers.common.Server;
 import com.technicjelle.bluemapofflineplayermarkers.core.Player;
-import com.technicjelle.bluemapofflineplayermarkers.impl.fabric.util.BukkitData;
+import dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.util.BukkitData;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapWorld;
 import net.fabricmc.loader.api.FabricLoader;

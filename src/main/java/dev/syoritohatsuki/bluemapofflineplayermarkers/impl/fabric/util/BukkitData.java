@@ -1,4 +1,4 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric.util;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric.util;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;

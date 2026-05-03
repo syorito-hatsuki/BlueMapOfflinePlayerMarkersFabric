@@ -1,4 +1,4 @@
-package com.technicjelle.bluemapofflineplayermarkers.impl.fabric;
+package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.technicjelle.bluemapofflineplayermarkers.common.PlayerData;
