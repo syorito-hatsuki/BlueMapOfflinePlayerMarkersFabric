@@ -3,6 +3,7 @@ package com.technicjelle.bluemapofflineplayermarkers.core;
 import com.technicjelle.bluemapofflineplayermarkers.common.PlayerData;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Player {
@@ -10,9 +11,9 @@ public class Player {
 	private final String playerName;
 	/**
 	 * The last time the player was online.
-	 * In milliseconds since epoch.
 	 */
-	private final Instant lastPlayed;
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType") // This lint suggests that Optional shouldn't be used as class member variables; only function return values. In this case, it makes complete sense to do.
+	private final Optional<Instant> lastPlayed;
 	private final PlayerData playerData;
 
 	public Player(UUID uuid, PlayerData playerData) {
@@ -30,7 +31,7 @@ public class Player {
 		return playerName;
 	}
 
-	public Instant getLastPlayed() {
+	public Optional<Instant> getLastPlayed() {
 		return lastPlayed;
 	}
 

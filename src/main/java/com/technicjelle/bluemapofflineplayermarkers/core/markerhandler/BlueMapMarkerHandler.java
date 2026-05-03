@@ -40,11 +40,15 @@ public class BlueMapMarkerHandler implements MarkerHandler {
 		// Add 1.8 to y to place the marker at the head-position of the player, like BlueMap does with its player-markers
 		position = position.add(0, 1.8, 0);
 
+		String detail = player.getPlayerName() + " <i>(offline)</i>";
+		if (player.getLastPlayed().isPresent()) {
+			detail += "<br><bmopm-datetime data-timestamp=" + player.getLastPlayed().get().toEpochMilli() + "></bmopm-datetime>";
+		}
+
 		// Create marker-template
 		POIMarker.Builder markerBuilder = POIMarker.builder()
 				.label(player.getPlayerName())
-				.detail(player.getPlayerName() + " <i>(offline)</i><br>"
-						+ "<bmopm-datetime data-timestamp=" + player.getLastPlayed().toEpochMilli() + "></bmopm-datetime>")
+				.detail(detail)
 				.styleClasses("bmopm-offline-player")
 				.position(position);
 
@@ -55,7 +59,7 @@ public class BlueMapMarkerHandler implements MarkerHandler {
 			markerBuilder.icon(BMSkin.getPlayerHeadIconAddress(api, player.getPlayerUUID(), map), 0, 0); // centered with CSS instead
 
 			// get marker-set (or create new marker set if none found)
-			MarkerSet markerSet = map.getMarkerSets().computeIfAbsent(Config.MARKER_SET_ID, id -> MarkerSet.builder()
+			MarkerSet markerSet = map.getMarkerSets().computeIfAbsent(Config.MARKER_SET_ID, _ -> MarkerSet.builder()
 					.label(config.getMarkerSetName())
 					.toggleable(config.isToggleable())
 					.defaultHidden(config.isDefaultHidden())

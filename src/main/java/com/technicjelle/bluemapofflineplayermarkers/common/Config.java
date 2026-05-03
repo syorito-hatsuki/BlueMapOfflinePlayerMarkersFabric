@@ -6,6 +6,7 @@ import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface Config {
@@ -38,9 +39,19 @@ public interface Config {
 	default boolean checkPlayerLastPlayed(UUID playerUUID) {
 		if (getExpireTimeInHours() <= 0) return false; // don't hide players if the expiry time is 0 or less
 
-		Instant lastPlayed = Singletons.getServer().getPlayerLastPlayed(playerUUID);
+		Optional<Instant> oLastPlayed = Singletons.getServer().getPlayerLastPlayed(playerUUID);
+		if (oLastPlayed.isEmpty()) return false; // don't hide players without a last played time
+
+		Instant lastPlayed = oLastPlayed.get();
 		Instant expireTime = Instant.now().minusSeconds(getExpireTimeInHours() * 60 * 60);
-		return lastPlayed.isBefore(expireTime);
+
+		boolean shouldBeHidden = lastPlayed.isBefore(expireTime);
+		if (shouldBeHidden) {
+			String playerName = Singletons.getServer().getPlayerName(playerUUID);
+			Singletons.getLogger().finer("Player " + playerName + " (" + playerUUID + ") was last online at " + oLastPlayed + ",\n" +
+			                             "which is more than " + getExpireTimeInHours() + " hours ago, so not adding marker");
+		}
+		return shouldBeHidden;
 	}
 
 	static List<GameMode> parseGameModes(List<String> hiddenGameModesStrings) throws IllegalArgumentException {

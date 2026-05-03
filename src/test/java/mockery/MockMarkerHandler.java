@@ -5,6 +5,7 @@ import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
 import com.technicjelle.bluemapofflineplayermarkers.core.markerhandler.MarkerHandler;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,7 +14,12 @@ public class MockMarkerHandler implements MarkerHandler {
 	public void add(Player player, BlueMapAPI __) {
 		Singletons.getLogger().finer("UUID: " + player.getPlayerUUID());
 		Singletons.getLogger().finer("Name: " + player.getPlayerName());
-		Singletons.getLogger().finer("Last Played: " + player.getLastPlayed().toEpochMilli());
+		Optional<Instant> oLastPlayed = player.getLastPlayed();
+		if (oLastPlayed.isPresent()) {
+			Singletons.getLogger().finer("Last Played: " + oLastPlayed.get().toEpochMilli());
+		} else {
+			Singletons.getLogger().finer("Last Played: not available");
+		}
 		Singletons.getLogger().finer("GameMode: " + player.getPlayerData().getGameMode());
 		Singletons.getLogger().finer("Position: " + player.getPlayerData().getPosition());
 		Singletons.getLogger().finer("Banned: " + Singletons.getServer().isPlayerBanned(player.getPlayerUUID()));

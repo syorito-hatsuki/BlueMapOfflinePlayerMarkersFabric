@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Optional;
@@ -36,15 +37,29 @@ public class PaperServer implements Server {
 
 	@Override
 	public Path getPlayerDataFolder() {
-		//I really don't like "getWorlds().get(0)" as a way to get the main world, but as far as I can tell there is no other way
-		return Bukkit.getWorlds().get(0).getWorldFolder().toPath().resolve("playerdata");
+		//I really don't like this way to get the main world, but as far as I can tell, there is no other way
+		World bukkitWorld = Bukkit.getWorlds().getFirst();
+		Path dimensionFolder = bukkitWorld.getWorldFolder().toPath();
+
+		//This is how BlueMap does it too... https://github.com/BlueMap-Minecraft/BlueMap/blob/c115f26d7b2330b83c368396b4f84c9ce53945ae/implementations/paper/src/main/java/de/bluecolored/bluemap/bukkit/BukkitWorld.java#L55
+		Path worldFolder = dimensionFolder.getParent().getParent().getParent();
+
+		Path newPlayerDataFolder = worldFolder.resolve("players").resolve("data");
+		if (Files.exists(newPlayerDataFolder)) return newPlayerDataFolder;
+
+		//Pre 26.1 format:
+		Path oldPlayerDataFolder = dimensionFolder.resolve("playerdata");
+		if (Files.exists(oldPlayerDataFolder)) return oldPlayerDataFolder;
+
+		return Path.of("");
 	}
 
 	@Override
-	public Instant getPlayerLastPlayed(UUID playerUUID) {
+	public Optional<Instant> getPlayerLastPlayed(UUID playerUUID) {
 		OfflinePlayer op = server.getOfflinePlayer(playerUUID);
-		long millisSinceEpoch = op.getLastPlayed();
-		return Instant.ofEpochMilli(millisSinceEpoch);
+		long millisSinceEpoch = op.getLastSeen();
+		if (millisSinceEpoch == 0) return Optional.empty();
+		return Optional.of(Instant.ofEpochMilli(millisSinceEpoch));
 	}
 
 	@Override
@@ -69,9 +84,7 @@ public class PaperServer implements Server {
 
 	@Override
 	public Optional<UUID> guessWorldUUID(Object object) {
-		if (object instanceof String) {
-			String dimensionString = (String) object;
-
+		if (object instanceof String dimensionString) {
 			//Try to get world by name
 			{
 				@Nullable World world = server.getWorld(dimensionString);

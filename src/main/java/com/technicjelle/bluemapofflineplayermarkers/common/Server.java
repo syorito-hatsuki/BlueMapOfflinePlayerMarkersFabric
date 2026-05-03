@@ -12,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
@@ -68,7 +70,7 @@ public interface Server {
 	 * @param playerUUID The UUID of the player to get the last played time for.
 	 * @return The last time the player was online in amount of milliseconds since epoch (January 1, 1970, 00:00:00 GMT).
 	 */
-	Instant getPlayerLastPlayed(UUID playerUUID);
+	Optional<Instant> getPlayerLastPlayed(UUID playerUUID);
 
 	String getPlayerName(UUID playerUUID);
 
@@ -81,8 +83,14 @@ public interface Server {
 		String name = _cachedPlayerNames.get(playerUUID);
 		if (name != null) return name;
 
-		URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID);
-		URLConnection request = url.openConnection();
+		final URI uri;
+		try {
+			uri = new URI("https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+		final URL url = uri.toURL();
+		final URLConnection request = url.openConnection();
 		request.connect();
 
 		JsonObject response = _gson.fromJson(new InputStreamReader(request.getInputStream()), JsonObject.class);

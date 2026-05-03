@@ -35,8 +35,8 @@ public class MockServer implements Server {
 	}
 
 	@Override
-	public Instant getPlayerLastPlayed(UUID playerUUID) {
-		return Instant.now();
+	public Optional<Instant> getPlayerLastPlayed(UUID playerUUID) {
+		return Optional.of(Instant.now());
 	}
 
 	@Override
