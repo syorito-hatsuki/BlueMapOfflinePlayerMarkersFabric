@@ -7,7 +7,6 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -41,8 +40,8 @@ public class FabricConfig implements Config {
             expireTimeInHours = json.expireTimeInHours;
             hiddenGameModes = json.hiddenGameModes;
             hideBannedPlayers = json.hideBannedPlayers;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't create or read JSON config", e);
         }
     }
 
