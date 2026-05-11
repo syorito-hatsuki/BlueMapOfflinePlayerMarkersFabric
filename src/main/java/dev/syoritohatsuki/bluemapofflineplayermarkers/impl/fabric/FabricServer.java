@@ -65,11 +65,14 @@ public class FabricServer implements Server {
 
     @Override
     public String getPlayerName(UUID playerUUID) {
-        Optional<NameAndId> profile = server.services().nameToIdCache().get(playerUUID);
-        if (profile.isPresent()) return profile.get().name();
-
-        var lastKnownName = bukkitData.getLastKnownName(playerUUID);
-        if (lastKnownName != null) return lastKnownName;
+        try {
+            Optional<NameAndId> profile = server.services().nameToIdCache().get(playerUUID);
+            if (profile.isPresent()) return profile.get().name();
+        } catch (Exception e) {
+            BluemapOfflinePlayerMarkers.LOGGER.warn("Can't get player name from server", playerUUID);
+            var lastKnownName = bukkitData.getLastKnownName(playerUUID);
+            if (lastKnownName != null) return lastKnownName;
+        }
 
         try {
             return Server.nameFromMojangAPI(playerUUID);

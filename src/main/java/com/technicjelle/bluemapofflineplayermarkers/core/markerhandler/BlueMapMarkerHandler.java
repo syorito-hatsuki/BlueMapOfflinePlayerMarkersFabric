@@ -66,7 +66,7 @@ public class BlueMapMarkerHandler implements MarkerHandler {
 			markerSet.put(player.getPlayerUUID().toString(), markerBuilder.build());
 		}
 
-		Singletons.getLogger().info("Marker for " + player.getPlayerName() + " added");
+		Singletons.getLogger().debug("Marker for " + player.getPlayerName() + " added");
 	}
 
 	@Override
@@ -77,6 +77,6 @@ public class BlueMapMarkerHandler implements MarkerHandler {
 			if (set != null) set.remove(playerUUID.toString());
 		}
 
-		Singletons.getLogger().info("Marker for " + Singletons.getServer().getPlayerName(playerUUID) + " removed");
+		Singletons.getLogger().debug("Marker for " + Singletons.getServer().getPlayerName(playerUUID) + " removed");
 	}
 }

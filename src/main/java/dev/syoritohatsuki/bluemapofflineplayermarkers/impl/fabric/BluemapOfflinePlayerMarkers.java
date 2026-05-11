@@ -1,7 +1,6 @@
 package dev.syoritohatsuki.bluemapofflineplayermarkers.impl.fabric;
 
 import com.technicjelle.BMUtils.BMCopy;
-import com.technicjelle.bluemapofflineplayermarkers.core.BMApiStatus;
 import com.technicjelle.bluemapofflineplayermarkers.core.Player;
 import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
 import com.technicjelle.bluemapofflineplayermarkers.core.fileloader.FileMarkerLoader;
@@ -30,7 +29,7 @@ public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitialize
             FabricConfig config = new FabricConfig();
             config.createAndReadConfig();
 
-            Singletons.init(new FabricServer(server), java.util.logging.Logger.getLogger(BluemapOfflinePlayerMarkers.class.getName()), config, new BlueMapMarkerHandler(), new BMApiStatus());
+            Singletons.init(new FabricServer(server), new FabricLogger(), config, new BlueMapMarkerHandler());
             Singletons.getServer().startUp();
 
             BlueMapAPI.onEnable(onEnableListener);
@@ -76,7 +75,7 @@ public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitialize
                 }
 
                 Singletons.getMarkerHandler().add(playerToAdd, api.get());
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | NullPointerException e) {
                 throw new RuntimeException("Can't add marker after " + handler.player.getUUID() + " left", e);
             }
         }).start());
@@ -93,14 +92,14 @@ public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitialize
         });
     }
 
-    private final Consumer<BlueMapAPI> onEnableListener = _ -> {
+    private final Consumer<BlueMapAPI> onEnableListener = blueMapAPI -> {
         LOGGER.info("API Ready! BlueMap Offline Player Markers plugin enabled!");
 
         new Thread(() -> {
             try {
                 Thread.sleep(100);
 
-                FileMarkerLoader.loadOfflineMarkers();
+                FileMarkerLoader.loadOfflineMarkers(blueMapAPI);
             } catch (InterruptedException e) {
                 throw new RuntimeException("Can't load marksers after restart", e);
             }

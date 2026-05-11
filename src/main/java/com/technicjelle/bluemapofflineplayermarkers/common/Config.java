@@ -48,7 +48,7 @@ public interface Config {
         boolean shouldBeHidden = lastPlayed.isBefore(expireTime);
         if (shouldBeHidden) {
             String playerName = Singletons.getServer().getPlayerName(playerUUID);
-            Singletons.getLogger().finer("Player " + playerName + " (" + playerUUID + ") was last online at " + oLastPlayed + ",\n" +
+            Singletons.getLogger().debug("Player " + playerName + " (" + playerUUID + ") was last online at " + oLastPlayed + ",\n" +
                     "which is more than " + getExpireTimeInHours() + " hours ago, so not adding marker");
         }
         return shouldBeHidden;
@@ -59,8 +59,7 @@ public interface Config {
         for (String hiddenGameModeString : hiddenGameModesStrings) {
             try {
                 GameMode parsedGameMode = GameMode.getById(hiddenGameModeString);
-                if (parsedGameMode == null)
-                    throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
+                if (parsedGameMode == null) throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
                 gameModes.add(parsedGameMode);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Invalid Game Mode: " + hiddenGameModeString);
