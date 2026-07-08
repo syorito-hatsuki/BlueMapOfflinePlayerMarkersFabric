@@ -18,6 +18,10 @@ version = modVersion
 repositories {
     maven("https://api.modrinth.com/maven")
     maven("https://repo.bluecolored.de/releases")
+    maven {
+        name = "faststatsReleases"
+        url = uri("https://repo.faststats.dev/releases")
+    }
 }
 
 dependencies {
@@ -31,8 +35,9 @@ dependencies {
     embed(libs.bmutils)
     embed(libs.mcutils)
 
-    embed(libs.fstats)
     embed(libs.ducky.updater)
+
+    embed(libs.faststats)
 }
 
 java {

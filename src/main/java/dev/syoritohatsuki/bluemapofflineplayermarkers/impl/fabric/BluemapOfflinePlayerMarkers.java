@@ -6,6 +6,9 @@ import com.technicjelle.bluemapofflineplayermarkers.core.Singletons;
 import com.technicjelle.bluemapofflineplayermarkers.core.fileloader.FileMarkerLoader;
 import com.technicjelle.bluemapofflineplayermarkers.core.markerhandler.BlueMapMarkerHandler;
 import de.bluecolored.bluemap.api.BlueMapAPI;
+import dev.faststats.ErrorTracker;
+import dev.faststats.Metrics;
+import dev.faststats.fabric.FabricContext;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -18,7 +21,15 @@ import java.util.function.Consumer;
 
 public class BluemapOfflinePlayerMarkers implements DedicatedServerModInitializer {
 
+    public static final String MOD_ID = "bluemapofflineplayermarkers";
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
     public static Logger LOGGER = LogManager.getLogger();
+
+    private final FabricContext context = new FabricContext.Factory(MOD_ID, "c481f7aa70a06daa44a6a464c491986e")
+            .metrics(Metrics.Factory::create)
+            .errorTrackerService(ERROR_TRACKER)
+            .create();
 
     @Override
     public void onInitializeServer() {
